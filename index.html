@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auxilio by srexffx</title>
+    <style>
+        :root {
+            --neon-pink: #ff007f;
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+        }
+
+        @keyframes hue-rotate { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+        @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes aura-pulse { 0%, 100% { box-shadow: 0 0 25px rgba(255, 0, 127, 0.3), 0 0 50px rgba(0, 242, 255, 0.1); } 50% { box-shadow: 0 0 45px rgba(255, 0, 127, 0.6), 0 0 90px rgba(0, 242, 255, 0.4); } }
+        @keyframes panel-entry { 0% { transform: scale(0.6); opacity: 0; filter: brightness(2); } 100% { transform: scale(1); opacity: 1; filter: brightness(1); } }
+
+        body {
+            background-color: #050505;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+
+        .border-glow {
+            position: relative;
+            padding: 3px;
+            border-radius: 25px;
+            overflow: hidden;
+            display: flex;
+            animation: hue-rotate 5s linear infinite, aura-pulse 3s ease-in-out infinite;
+        }
+
+        .border-glow::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(var(--neon-pink), transparent 15%, var(--neon-blue) 30%, transparent 45%, var(--neon-purple) 60%, transparent 75%, var(--neon-pink) 90%);
+            animation: rotate 2.5s linear infinite;
+            top: -50%; left: -50%;
+        }
+
+        .panel {
+            width: 340px;
+            padding: 30px;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 22px;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 { 
+            font-size: 1.6rem; 
+            margin: 0; 
+            text-align: center;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #fff, var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px var(--neon-pink));
+        }
+
+        .socials { font-size: 0.75rem; color: #888; margin-top: 8px; text-align: center; }
+        .socials span { color: var(--neon-pink); font-weight: bold; text-shadow: 0 0 10px var(--neon-pink); }
+
+        .input-container { position: relative; margin-top: 25px; }
+        input[type="password"], input[type="text"] {
+            width: 100%; padding: 14px; background: #111; border: 1px solid var(--neon-pink); border-radius: 10px; color: #fff; text-align: center; outline: none; box-sizing: border-box; font-size: 1rem;
+        }
+
+        .eye-icon {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; width: 22px; stroke: var(--neon-pink); fill: none; transition: 0.3s;
+        }
+        .eye-icon:hover { filter: drop-shadow(0 0 5px var(--neon-pink)); }
+
+        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); }
+
+        .switch { position: relative; width: 45px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-round { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #222; transition: .4s; border-radius: 34px; }
+        .slider-round:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider-round { background-color: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); }
+        input:checked + .slider-round:before { transform: translateX(20px); }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-runnable-track { height: 6px; background: #222; border-radius: 10px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #fff; border: 3px solid var(--neon-pink); margin-top: -6px; box-shadow: 0 0 10px var(--neon-pink); }
+
+        .btn {
+            width: 100%; padding: 16px; background: transparent; border: 2px solid var(--neon-pink); color: white; font-weight: 900; border-radius: 14px; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .btn:hover { background: var(--neon-pink); box-shadow: 0 0 40px var(--neon-pink); transform: scale(1.02); }
+
+        #notif-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .notification { background: #0a0a0a; border: 1px solid var(--neon-pink); color: white; padding: 12px 25px; margin-bottom: 10px; border-radius: 10px; font-size: 0.85rem; font-weight: bold; box-shadow: 0 0 20px rgba(255, 0, 127, 0.4); animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
+
+        .entering { display: flex !important; animation: panel-entry 0.6s ease-out forwards; }
+    </style>
+</head>
+<body>
+
+<div id="notif-container"></div>
+
+<div class="border-glow" id="login-box">
+    <div class="panel" style="width: 300px; text-align: center;">
+        <h1>ACCESS LOGIN</h1>
+        <div class="socials">TT: <span>@srexisgone</span> | IG: <span>@srexffx</span></div>
+        
+        <div class="input-container">
+            <input type="password" id="pass-input" placeholder="Enter Credentials">
+            <svg id="eye-icon" class="eye-icon" onclick="togglePass()" viewBox="0 0 24 24" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        
+        <button class="btn" onclick="checkLogin()" style="margin-top: 25px;">LOGIN</button>
+    </div>
+</div>
+
+<div class="border-glow" id="ui-box" style="display: none; position: absolute;">
+    <div class="panel">
+        <header id="drag-header">
+            <h1>Auxilio by srexffx</h1>
+            <div class="socials">TT: <span>@srexisgone</span> | IG: <span>@srexffx</span></div>
+        </header>
+
+        <div class="row">
+            <span>Ativar Auxílio</span>
+            <label class="switch"><input type="checkbox" onchange="toggleNotif(this, 'Auxílio')"><span class="slider-round"></span></label>
+        </div>
+        <div class="row">
+            <span>Ativar Fov</span>
+            <label class="switch"><input type="checkbox" onchange="toggleNotif(this, 'Fov')"><span class="slider-round"></span></label>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px;"><span>360 FOV</span><span id="fov-val" style="color:var(--neon-pink)">180</span></div>
+            <input type="range" min="0" max="360" value="180" oninput="document.getElementById('fov-val').innerText = this.value">
+        </div>
+
+        <div style="margin: 20px 0 30px 0;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px;"><span>120 FPS</span><span id="fps-val" style="color:var(--neon-pink)">60</span></div>
+            <input type="range" min="30" max="120" value="60" oninput="document.getElementById('fps-val').innerText = this.value">
+        </div>
+
+        <button class="btn" onclick="showNotif('SISTEMA INJETADO!')">Injetar Agora</button>
+    </div>
+</div>
+
+<script>
+    function showNotif(text) {
+        const container = document.getElementById("notif-container");
+        const notif = document.createElement("div");
+        notif.className = "notification";
+        notif.innerText = text;
+        container.appendChild(notif);
+        setTimeout(() => { notif.style.opacity = "0"; notif.style.transform = "translateX(100%)"; notif.style.transition = "0.5s"; setTimeout(() => notif.remove(), 500); }, 2500);
+    }
+
+    function toggleNotif(cb, name) {
+        showNotif(name + (cb.checked ? " ATIVADO" : " DESATIVADO"));
+    }
+
+    function togglePass() {
+        const input = document.getElementById("pass-input");
+        const eye = document.getElementById("eye-icon");
+        if (input.type === "password") {
+            input.type = "text";
+            eye.style.stroke = "white";
+        } else {
+            input.type = "password";
+            eye.style.stroke = "var(--neon-pink)";
+        }
+    }
+
+    function checkLogin() {
+        if (document.getElementById("pass-input").value === "srexffx") {
+            const login = document.getElementById("login-box");
+            login.style.transition = "0.5s";
+            login.style.opacity = "0";
+            login.style.transform = "scale(0.8)";
+            
+            setTimeout(() => {
+                login.style.display = "none";
+                const ui = document.getElementById("ui-box");
+                ui.classList.add("entering");
+                showNotif("ACESSO AUTORIZADO");
+            }, 500);
+        } else {
+            showNotif("ACESSO NEGADO");
+        }
+    }
+
+    const uiBox = document.getElementById("ui-box");
+    const header = document.getElementById("drag-header");
+    let isDragging = false, offset = { x: 0, y: 0 };
+    header.onmousedown = (e) => { isDragging = true; offset.x = e.clientX - uiBox.offsetLeft; offset.y = e.clientY - uiBox.offsetTop; };
+    document.onmousemove = (e) => { if (!isDragging) return; uiBox.style.left = (e.clientX - offset.x) + "px"; uiBox.style.top = (e.clientY - offset.y) + "px"; uiBox.style.margin = "0"; uiBox.style.position = "absolute"; };
+    document.onmouseup = () => isDragging = false;
+</script>
+
+</body>
+</html>
